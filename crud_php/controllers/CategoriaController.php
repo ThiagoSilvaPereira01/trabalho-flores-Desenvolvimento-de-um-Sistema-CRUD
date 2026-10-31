@@ -1,6 +1,17 @@
 <?php
-include_once '../config/database.php';
-include_once '../models/Categoria.php';
+/******************************************************************************
+Curso: Tecnologia em Análise e Desenvolvimento de Sistemas
+Disciplina: Linguagem e Técnicas de Programação
+Professor: Flores
+Turma: ADS2B
+Componentes: 
+ [Preencher com os nomes e RAs dos 5 integrantes]
+Data: 15 de Novembro de 2026
+Descritivo: Controlador responsável pela lógica de negócios da entidade Categoria
+*******************************************************************************/
+
+include_once __DIR__ . '/../config/database.php';
+include_once __DIR__ . '/../models/Categoria.php';
 
 class CategoriaController {
     private $conn;
@@ -14,7 +25,7 @@ class CategoriaController {
 
     public function index() {
         $stmt = $this->categoria->read();
-        $num = $stmt->rowCount();
+        $num = $stmt ? $stmt->rowCount() : 0;
         return ['stmt' => $stmt, 'num' => $num];
     }
 
@@ -43,8 +54,13 @@ class CategoriaController {
 
     public function delete($id) {
         $this->categoria->id = $id;
-        if($this->categoria->delete()) {
-            return true;
+        try {
+            if($this->categoria->delete()) {
+                return true;
+            }
+        } catch (\PDOException $e) {
+            // Em caso de chave estrangeira com RESTRICT, impede o erro fatal
+            return false;
         }
         return false;
     }

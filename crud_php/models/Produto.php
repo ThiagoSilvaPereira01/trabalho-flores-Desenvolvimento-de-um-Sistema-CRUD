@@ -1,4 +1,15 @@
 <?php
+/******************************************************************************
+Curso: Tecnologia em Análise e Desenvolvimento de Sistemas
+Disciplina: Linguagem e Técnicas de Programação
+Professor: Flores
+Turma: ADS2B
+Componentes: 
+ [Preencher com os nomes e RAs dos 5 integrantes]
+Data: 15 de Novembro de 2026
+Descritivo: Modelo de dados (Model) da entidade Produto com relacionamento para Categoria
+*******************************************************************************/
+
 class Produto {
     private $conn;
     private $table_name = "produtos";
@@ -14,7 +25,7 @@ class Produto {
         $this->conn = $db;
     }
 
-    // Usado para ler produtos
+    // Usado para ler produtos com JOIN na tabela de categorias
     function read(){
         $query = "SELECT
                     c.nome as categoria_nome, p.id, p.nome, p.descricao, p.preco, p.categoria_id
@@ -24,7 +35,7 @@ class Produto {
                         categorias c
                             ON p.categoria_id = c.id
                 ORDER BY
-                    p.nome DESC";
+                    p.nome ASC";
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -37,10 +48,10 @@ class Produto {
         $query = "INSERT INTO " . $this->table_name . " SET nome=:nome, preco=:preco, descricao=:descricao, categoria_id=:categoria_id";
         $stmt = $this->conn->prepare($query);
 
-        $this->nome=htmlspecialchars(strip_tags($this->nome));
-        $this->preco=htmlspecialchars(strip_tags($this->preco));
-        $this->descricao=htmlspecialchars(strip_tags($this->descricao));
-        $this->categoria_id=htmlspecialchars(strip_tags($this->categoria_id));
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
+        $this->preco = htmlspecialchars(strip_tags($this->preco));
+        $this->descricao = htmlspecialchars(strip_tags($this->descricao));
+        $this->categoria_id = htmlspecialchars(strip_tags($this->categoria_id));
 
         $stmt->bindParam(":nome", $this->nome);
         $stmt->bindParam(":preco", $this->preco);
@@ -67,17 +78,19 @@ class Produto {
                 LIMIT
                     0,1";
 
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $this->nome = $row["nome"];
-        $this->descricao = $row["descricao"];
-        $this->preco = $row["preco"];
-        $this->categoria_id = $row["categoria_id"];
-        $this->categoria_nome = $row["categoria_nome"];
+        if ($row) {
+            $this->nome = $row["nome"];
+            $this->descricao = $row["descricao"];
+            $this->preco = $row["preco"];
+            $this->categoria_id = $row["categoria_id"];
+            $this->categoria_nome = $row["categoria_nome"];
+        }
     }
 
     // Usado para atualizar o produto
@@ -94,11 +107,11 @@ class Produto {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->nome=htmlspecialchars(strip_tags($this->nome));
-        $this->preco=htmlspecialchars(strip_tags($this->preco));
-        $this->descricao=htmlspecialchars(strip_tags($this->descricao));
-        $this->categoria_id=htmlspecialchars(strip_tags($this->categoria_id));
-        $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
+        $this->preco = htmlspecialchars(strip_tags($this->preco));
+        $this->descricao = htmlspecialchars(strip_tags($this->descricao));
+        $this->categoria_id = htmlspecialchars(strip_tags($this->categoria_id));
+        $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(":nome", $this->nome);
         $stmt->bindParam(":preco", $this->preco);
@@ -117,7 +130,7 @@ class Produto {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
 
-        $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(1, $this->id);
 

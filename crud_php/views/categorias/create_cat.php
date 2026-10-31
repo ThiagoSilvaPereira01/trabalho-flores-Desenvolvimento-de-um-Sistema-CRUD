@@ -1,28 +1,84 @@
 <?php
+/******************************************************************************
+Curso: Tecnologia em Análise e Desenvolvimento de Sistemas
+Disciplina: Linguagem e Técnicas de Programação
+Professor: Flores
+Turma: ADS2B
+Componentes: 
+ [Preencher com os nomes e RAs dos 5 integrantes]
+Data: 15 de Novembro de 2026
+Descritivo: Formulário de cadastro de nova Categoria
+*******************************************************************************/
+
 include_once __DIR__ . '/../../controllers/CategoriaController.php';
 
 $controller = new CategoriaController();
 
+$baseDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+$baseUrl = $baseDir;
+$errorMessage = null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = $_POST['nome'];
-    if ($controller->create($nome)) {
-        header('Location: /crud_php/public/index.php?page=categorias');
-        exit();
+    $nome = trim($_POST['nome'] ?? '');
+
+    if (empty($nome)) {
+        $errorMessage = "Informe o nome da categoria.";
     } else {
-        echo "<p class='error'>Não foi possível criar a categoria.</p>";
+        if ($controller->create($nome)) {
+            header("Location: " . $baseUrl . "/index.php?page=categorias&msg=created");
+            exit();
+        } else {
+            $errorMessage = "Erro ao cadastrar a categoria no banco de dados.";
+        }
     }
 }
 
+$pageTitle = "Nova Categoria";
 include __DIR__ . '/../../views/includes/header.php';
 ?>
 
-<h2>Criar Categoria</h2>
+<div class="card form-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fa-solid fa-folder-plus"></i>
+            <span>Cadastrar Nova Categoria</span>
+        </div>
+        <a href="<?php echo $baseUrl; ?>/index.php?page=categorias" class="btn btn-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Voltar</span>
+        </a>
+    </div>
 
-<form action="/crud_php/public/index.php?page=categorias&action=create" method="POST">
-    <label for="nome">Nome da Categoria:</label>
-    <input type="text" id="nome" name="nome" required>
-    <button type="submit" class="button">Salvar</button>
-    <a href="/crud_php/public/index.php?page=categorias" class="button">Cancelar</a>
-</form>
+    <div class="card-body">
+        <?php if (!empty($errorMessage)): ?>
+            <div class="alert alert-danger">
+                <div class="alert-content">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span><?php echo htmlspecialchars($errorMessage); ?></span>
+                </div>
+                <button type="button" class="alert-close">&times;</button>
+            </div>
+        <?php endif; ?>
+
+        <form action="<?php echo $baseUrl; ?>/index.php?page=categorias&action=create" method="POST">
+            <div class="form-group col-full">
+                <label for="nome">Nome da Categoria <span class="required">*</span></label>
+                <input type="text" id="nome" name="nome" class="form-control" 
+                       placeholder="Ex: Informática, Papelaria, Acessórios..." required autofocus>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Salvar Categoria</span>
+                </button>
+                <a href="<?php echo $baseUrl; ?>/index.php?page=categorias" class="btn btn-secondary">
+                    <i class="fa-solid fa-xmark"></i>
+                    <span>Cancelar</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
 <?php include __DIR__ . '/../../views/includes/footer.php'; ?>

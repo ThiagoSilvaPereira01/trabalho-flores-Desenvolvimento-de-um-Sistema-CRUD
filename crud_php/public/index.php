@@ -1,4 +1,17 @@
 <?php
+/******************************************************************************
+Curso: Tecnologia em Análise e Desenvolvimento de Sistemas
+Disciplina: Linguagem e Técnicas de Programação
+Professor: Flores
+Turma: ADS2B
+Componentes: 
+ [Preencher com os nomes e RAs dos 5 integrantes]
+Data: 15 de Novembro de 2026
+Descritivo: Roteador principal da aplicação (Front Controller) para Produtos e Categorias
+*******************************************************************************/
+
+$baseDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+$baseUrl = $baseDir;
 
 $page = isset($_GET["page"]) ? $_GET["page"] : "produtos";
 $action = isset($_GET["action"]) ? $_GET["action"] : "index";
@@ -20,17 +33,18 @@ switch ($page) {
                 include_once __DIR__ . '/../controllers/ProdutoController.php';
                 $controller = new ProdutoController();
                 if ($controller->delete($id)) {
-                    header("Location: /crud_php/public/index.php?page=produtos");
-                    exit();
+                    header("Location: " . $baseUrl . "/index.php?page=produtos&msg=deleted");
                 } else {
-                    echo "<p class=\'error\'>Não foi possível deletar o produto.</p>";
+                    header("Location: " . $baseUrl . "/index.php?page=produtos&msg=error");
                 }
+                exit();
                 break;
             default:
                 include __DIR__ . '/../views/produtos/index_prod.php';
                 break;
         }
         break;
+
     case "categorias":
         switch ($action) {
             case "index":
@@ -45,21 +59,24 @@ switch ($page) {
             case "delete":
                 include_once __DIR__ . '/../controllers/CategoriaController.php';
                 $controller = new CategoriaController();
-                if ($controller->delete($id)) {
-                    header("Location: /crud_php/public/index.php?page=categorias");
-                    exit();
-                } else {
-                    echo "<p class=\'error\'>Não foi possível deletar a categoria.</p>";
+                try {
+                    if ($controller->delete($id)) {
+                        header("Location: " . $baseUrl . "/index.php?page=categorias&msg=deleted");
+                    } else {
+                        header("Location: " . $baseUrl . "/index.php?page=categorias&msg=has_products");
+                    }
+                } catch (\Exception $e) {
+                    header("Location: " . $baseUrl . "/index.php?page=categorias&msg=has_products");
                 }
+                exit();
                 break;
             default:
                 include __DIR__ . '/../views/categorias/index_cat.php';
                 break;
         }
         break;
+
     default:
         include __DIR__ . '/../views/produtos/index_prod.php';
         break;
 }
-
-?>
