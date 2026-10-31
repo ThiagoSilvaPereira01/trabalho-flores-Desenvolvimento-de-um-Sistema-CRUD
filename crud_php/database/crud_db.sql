@@ -66,4 +66,5 @@ INSERT INTO produtos (id, nome, descricao, preco, categoria_id) VALUES
 (5, 'Cadeira Ergonômica Presidente', 'Suporte lombar ajustável, braços 3D, revestimento em tela mesh respirável.', 850.00, 3),
 (6, 'Mesa para Computador em L', 'Estrutura reforçada em aço carbono com tampo em MDF de 25mm na cor freijó.', 620.00, 3),
 (7, 'Headset Gamer 7.1 Surround', 'Drivers de 50mm, microfone com cancelamento de ruído e iluminação LED lateral.', 249.90, 4),
-(8, 'Webcam Full HD 1080p 60fps', 'Microfone duplo integrado e foco automático ideal para reuniões e transmissões.', 219.00, 4);
+(8, 'Webcam Full HD 1080p 60fps', 'Microfone duplo integrado e foco automático ideal para reuniões e transmissões.', 219.00, 4),
+(9, 'Fone Bluetooth', 'Fone de ouvido Bluetooth com supressão de ruído adaptativo e interpretador linguistico.', 400.00, 4);
