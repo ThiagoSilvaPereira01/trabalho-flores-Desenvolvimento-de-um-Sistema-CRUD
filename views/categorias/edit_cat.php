@@ -5,7 +5,11 @@ Disciplina: Linguagem e Técnicas de Programação
 Professor: Flores
 Turma: ADS2B
 Componentes: 
- [Preencher com os nomes e RAs dos 5 integrantes]
+             26011846-2 - Arthur Vinicius de Freitas Videres
+             26003401-2 - Matheus Azamur Passos
+             26006867-2 - Dennis Gabriel de Oliveira
+             26007484-2 - Murilo da Silva Santos
+             26003834-2 - Thiago Pereira da Silva
 Data: 15 de Novembro de 2026
 Descritivo: Formulário de edição de Categoria existente
 *******************************************************************************/

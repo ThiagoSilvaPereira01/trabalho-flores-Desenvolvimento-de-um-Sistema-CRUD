@@ -1,4 +1,4 @@
-# Sistema de Gestão CRUD em PHP & MySQL (EstoqueMaster)
+# TechStore Admin - Painel de Controle e Gestão da Loja Virtual
 
 Projeto prático desenvolvido para a disciplina de **Linguagem e Técnicas de Programação (LTP)** do curso de **Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)** - Turma **ADS2B**, sob orientação do **Prof. José Carlos Domingues Flores**.
 
@@ -8,29 +8,37 @@ Projeto prático desenvolvido para a disciplina de **Linguagem e Técnicas de Pr
 
 | RA | Nome Completo |
 | :--- | :--- |
-| `25000000-1` | [Nome do Aluno 1] |
-| `25000000-2` | [Nome do Aluno 2] |
-| `25000000-3` | [Nome do Aluno 3] |
-| `25000000-4` | [Nome do Aluno 4] |
-| `25000000-5` | [Nome do Aluno 5] |
+| `26011846-2` | Arthur Vinicius de Freitas Videres |
+| `26003401-2` | Matheus Azamur Passos |
+| `26006867-2` | Dennis Gabriel de Oliveira |
+| `26007484-2` | Murilo da Silva Santos |
+| `26003834-2` | Thiago Pereira da Silva |
 
 ---
 
 ## 🚀 Sobre o Projeto
 
-A aplicação consiste em um **Sistema CRUD completo em PHP puro com MySQL**, implementado segundo o padrão de arquitetura modular **MVC (Model-View-Controller)**. O sistema gerencia duas entidades relacionais: **Categorias** e **Produtos** (onde cada produto pertence a uma categoria).
+A aplicação consiste em um **Painel Administrativo para Gestão de Catálogo e Estoque de Loja Virtual (E-commerce Merchant Dashboard)** desenvolvido em **PHP puro com MySQL**, implementado sob a arquitetura modular **MVC (Model-View-Controller)**. 
 
-### 🌟 Diferenciais e Funcionalidades Implementadas
-- **Dashboard / Painel de Métricas (KPIs)**: Exibe em tempo real o total de produtos cadastrados, quantidade de categorias ativas e cálculo automático do preço médio.
-- **Filtro e Busca Dinâmica**: Barra de pesquisa com filtragem em tempo real (sem recarregar a página) por nome/descrição e dropdown para filtrar por categoria.
-- **Interface Moderna e Responsiva**: Design limpo com fontes do Google Fonts (*Inter*), ícones do *FontAwesome 6*, tabelas estilizadas, badges de categorias e feedback visual.
-- **Notificações e Feedback Visual**: Alertas interativos de confirmação para criação, atualização e exclusão de itens.
-- **Segurança e Integridade Referencial**: Confirmação JavaScript antes de exclusões (`confirm`) e tratamento de integridade referencial com bloqueio amigável caso o usuário tente excluir categorias que possuem produtos vinculados.
-- **Portabilidade de Rotas**: URLs dinâmicas e relativas, funcionando em qualquer pasta do XAMPP ou servidor embutido do PHP.
+O sistema permite que o lojista/administrador controle em tempo real todos os produtos disponíveis na loja, organize departamentos, gerencie preços de venda e visualize métricas financeiras do inventário.
+
+### 🌟 Funcionalidades e Diferenciais
+- **Dashboard de Métricas do Lojista (KPIs)**:
+  - Total de produtos ativos no catálogo.
+  - Quantidade de departamentos cadastrados.
+  - Valor total acumulado do patrimônio em estoque (R$).
+  - Ticket médio praticado por item (R$).
+- **Visualização em Dois Modos**:
+  - 🔲 **Cards da Loja (Vitrine de Gestão)**: Cards visuais modernos com fotos temáticas em alta resolução, código `#ID`, status *🟢 Em Exibição na Loja*, preço de venda, tag de departamento e botões de ação rápida (*Editar Cadastro* e *Excluir*).
+  - 📋 **Tabela de Estoque (Inventário Operacional)**: Tabela administrativa completa ideal para conferência rápida de dados com IDs, miniaturas, descrições e ações CRUD.
+- **Filtro e Busca Dinâmica em Tempo Real**: Pesquisa instantânea sincronizada no cabeçalho e na barra de ferramentas por nome, código ou descrição, com filtro por departamento e ordenação por preço e nome.
+- **Ficha Técnica do Item (Quick Inspect)**: Modal de inspeção administrativa ao clicar na miniatura do produto, exibindo detalhes cadastrais completos e atalho para edição.
+- **Integridade Referencial e Segurança**: Proteção contra exclusão de departamentos com produtos vinculados (`ON DELETE RESTRICT`) e confirmação JavaScript antes de remoções.
+- **Portabilidade de Rotas**: Construção com URLs relativas dinâmicas (`$baseUrl`), funcionando em qualquer subdiretório do XAMPP sem dependência de caminho fixo.
 
 ---
 
-## 🗂️ Arquitetura do Projeto
+## 🗂️ Arquitetura do Projeto (MVC)
 
 ```text
 trabalho-flores-Desenvolvimento-de-um-Sistema-CRUD/
@@ -39,41 +47,37 @@ trabalho-flores-Desenvolvimento-de-um-Sistema-CRUD/
 ├── crud_db.sql                        # Script SQL de criação do banco e dados de teste
 ├── README.md                          # Documentação completa do projeto
 │
-└── crud_php/
-    ├── config/
-    │   └── database.php               # Conexão PDO segura com MySQL
+├── config/
+│   └── database.php                   # Conexão PDO segura com MySQL
+│
+├── controllers/
+│   ├── CategoriaController.php        # Controlador de Departamentos/Categorias
+│   └── ProdutoController.php          # Controlador de Produtos do Catálogo
+│
+├── models/
+│   ├── Categoria.php                  # Modelo de dados da entidade Categoria
+│   └── Produto.php                    # Modelo com JOIN relacional para Produtos
+│
+├── public/
+│   ├── css/
+│   │   └── style.css                  # Folha de estilos do Painel Administrativo
+│   ├── _.htaccess                     # Configurações de servidor
+│   └── index.php                      # Front Controller e roteamento principal
+│
+└── views/
+    ├── categorias/
+    │   ├── create_cat.php             # Cadastro de novo departamento
+    │   ├── edit_cat.php               # Edição de departamento
+    │   └── index_cat.php              # Listagem gerencial de departamentos
     │
-    ├── controllers/
-    │   ├── CategoriaController.php    # Lógica de controle para Categorias
-    │   └── ProdutoController.php      # Lógica de controle para Produtos
+    ├── includes/
+    │   ├── header.php                 # Topbar administrativa, busca global e status
+    │   └── footer.php                 # Rodapé com créditos acadêmicos e scripts JS
     │
-    ├── database/
-    │   └── crud_db.sql                # Cópia do script SQL para backup
-    │
-    ├── models/
-    │   ├── Categoria.php              # Modelo e operações SQL de Categorias
-    │   └── Produto.php                # Modelo e operações SQL com JOIN de Produtos
-    │
-    ├── public/
-    │   ├── css/
-    │   │   └── style.css              # Folha de estilo moderna e responsiva
-    │   ├── _.htaccess                 # Regras de rewrite opcionais
-    │   └── index.php                  # Front Controller e roteamento principal
-    │
-    └── views/
-        ├── categorias/
-        │   ├── create_cat.php         # Tela de cadastro de categoria
-        │   ├── edit_cat.php           # Tela de edição de categoria
-        │   └── index_cat.php          # Listagem com busca de categorias
-        │
-        ├── includes/
-        │   ├── header.php             # Navbar, links ativos e cabeçalho HTML
-        │   └── footer.php             # Rodapé, créditos e scripts JavaScript
-        │
-        └── produtos/
-            ├── create_prod.php        # Tela de cadastro de produto
-            ├── edit_prod.php          # Tela de edição de produto
-            └── index_prod.php         # Listagem, dashboard e filtros
+    └── produtos/
+        ├── create_prod.php            # Formulário de inclusão de produto
+        ├── edit_prod.php              # Formulário de edição de produto
+        └── index_prod.php             # Painel de controle, KPIs, cards e tabela
 ```
 
 ---
@@ -81,27 +85,26 @@ trabalho-flores-Desenvolvimento-de-um-Sistema-CRUD/
 ## 🛠️ Como Executar a Aplicação Localmente
 
 ### Pré-requisitos
-- **XAMPP** (com Apache e MySQL habilitados) ou ambiente PHP 8.x + MySQL.
+- **XAMPP** (Apache e MySQL ativos) ou ambiente PHP 8.x + MySQL.
 
-### Passo 1: Clonar ou Copiar para o XAMPP
-Copie a pasta do projeto para o diretório `htdocs` do seu XAMPP:
+### Passo 1: Copiar para o XAMPP
+Mantenha a pasta no diretório padrão do Apache:
 ```bash
 c:\xampp\htdocs\trabalho-flores-Desenvolvimento-de-um-Sistema-CRUD
 ```
 
 ### Passo 2: Importar o Banco de Dados no MySQL
-1. Abra o **XAMPP Control Panel** e inicie os módulos **Apache** e **MySQL**.
-2. Abra o navegador e acesse o phpMyAdmin: [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
-3. Clique na aba **Importar** (ou **SQL**).
-4. Selecione o arquivo `crud_db.sql` localizado na raiz do projeto e clique em **Executar**.
-   - O script criará o banco de dados `crud_db`, as tabelas `categorias` e `produtos`, e já inserirá registros iniciais de teste.
+1. Abra o **XAMPP Control Panel** e inicialize o **Apache** e o **MySQL**.
+2. Acesse o phpMyAdmin: [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
+3. Na aba **Importar**, selecione o arquivo `crud_db.sql` e clique em **Executar**.
+   - Serão criadas as tabelas `categorias` e `produtos` com dados de demonstração.
 
-### Passo 3: Acessar no Navegador
+### Passo 3: Acessar o Painel no Navegador
 Abra seu navegador em:
 ```text
 http://localhost/trabalho-flores-Desenvolvimento-de-um-Sistema-CRUD/
 ```
-*(Você será automaticamente direcionado para o catálogo de produtos e dashboard)*.
+*(Você será direcionado diretamente para o painel administrativo da loja em `/public/index.php`)*.
 
 ---
 

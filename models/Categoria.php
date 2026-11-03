@@ -1,4 +1,19 @@
 <?php
+/******************************************************************************
+Curso: Tecnologia em Análise e Desenvolvimento de Sistemas
+Disciplina: Linguagem e Técnicas de Programação
+Professor: Flores
+Turma: ADS2B
+Componentes: 
+             26011846-2 - Arthur Vinicius de Freitas Videres
+             26003401-2 - Matheus Azamur Passos
+             26006867-2 - Dennis Gabriel de Oliveira
+             26007484-2 - Murilo da Silva Santos
+             26003834-2 - Thiago Pereira da Silva
+Data: 15 de Novembro de 2026
+Descritivo: Modelo de dados (Model) da entidade Categoria para persistência no MySQL
+*******************************************************************************/
+
 class Categoria {
     private $conn;
     private $table_name = "categorias";
@@ -10,9 +25,9 @@ class Categoria {
         $this->conn = $db;
     }
 
-    // Usado para ler categorias
+    // Usado para ler todas as categorias
     function read(){
-        $query = "SELECT id, nome FROM " . $this->table_name . " ORDER BY nome";
+        $query = "SELECT id, nome FROM " . $this->table_name . " ORDER BY nome ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -23,7 +38,7 @@ class Categoria {
         $query = "INSERT INTO " . $this->table_name . " SET nome=:nome";
         $stmt = $this->conn->prepare($query);
 
-        $this->nome=htmlspecialchars(strip_tags($this->nome));
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
 
         $stmt->bindParam(":nome", $this->nome);
 
@@ -36,13 +51,15 @@ class Categoria {
     // Usado para ler uma única categoria
     function readOne(){
         $query = "SELECT id, nome FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $this->nome = $row['nome'];
+        if ($row) {
+            $this->nome = $row['nome'];
+        }
     }
 
     // Usado para atualizar a categoria
@@ -50,8 +67,8 @@ class Categoria {
         $query = "UPDATE " . $this->table_name . " SET nome = :nome WHERE id = :id";
         $stmt = $this->conn->prepare($query);
 
-        $this->nome=htmlspecialchars(strip_tags($this->nome));
-        $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
+        $this->id   = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(':nome', $this->nome);
         $stmt->bindParam(':id', $this->id);
@@ -67,7 +84,7 @@ class Categoria {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
 
-        $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(1, $this->id);
 

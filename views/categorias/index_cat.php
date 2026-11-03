@@ -5,9 +5,13 @@ Disciplina: Linguagem e Técnicas de Programação
 Professor: Flores
 Turma: ADS2B
 Componentes: 
- [Preencher com os nomes e RAs dos 5 integrantes]
+             26011846-2 - Arthur Vinicius de Freitas Videres
+             26003401-2 - Matheus Azamur Passos
+             26006867-2 - Dennis Gabriel de Oliveira
+             26007484-2 - Murilo da Silva Santos
+             26003834-2 - Thiago Pereira da Silva
 Data: 15 de Novembro de 2026
-Descritivo: Visão de Listagem de Categorias com busca em tempo real e ações de gerenciamento
+Descritivo: Painel Administrativo de Gestão de Departamentos e Categorias da Loja
 *******************************************************************************/
 
 include_once __DIR__ . '/../../controllers/CategoriaController.php';
@@ -18,9 +22,31 @@ $stmt = $data['stmt'];
 $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $num = count($categorias);
 
-$pageTitle = "Gestão de Categorias";
+$pageTitle = "Gestão de Departamentos";
 include __DIR__ . '/../../views/includes/header.php';
 ?>
+
+<!-- ================= CABEÇALHO DO MÓDULO ================= -->
+<div class="admin-page-header">
+    <div class="page-title-group">
+        <div class="badge-pill-header">
+            <i class="fa-solid fa-tags"></i>
+            <span>Módulo de Estrutura da Loja</span>
+        </div>
+        <h2 class="page-main-title">Departamentos & Categorias</h2>
+        <p class="page-subtitle">Gerencie os departamentos em que os produtos são organizados para exibição e filtragem no catálogo da loja.</p>
+    </div>
+    <div class="page-header-actions">
+        <a href="<?php echo $baseUrl; ?>/index.php?page=categorias&action=create" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            <span>Cadastrar Novo Departamento</span>
+        </a>
+        <a href="<?php echo $baseUrl; ?>/index.php?page=produtos" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Voltar ao Catálogo</span>
+        </a>
+    </div>
+</div>
 
 <!-- Mensagens de Feedback (Alerts) -->
 <?php if (isset($_GET['msg'])): ?>
@@ -28,7 +54,7 @@ include __DIR__ . '/../../views/includes/header.php';
         <div class="alert alert-success">
             <div class="alert-content">
                 <i class="fa-solid fa-circle-check"></i>
-                <span>Categoria cadastrada com sucesso!</span>
+                <span>Novo departamento cadastrado com sucesso!</span>
             </div>
             <button type="button" class="alert-close">&times;</button>
         </div>
@@ -36,7 +62,7 @@ include __DIR__ . '/../../views/includes/header.php';
         <div class="alert alert-success">
             <div class="alert-content">
                 <i class="fa-solid fa-circle-check"></i>
-                <span>Categoria atualizada com sucesso!</span>
+                <span>Departamento atualizado com sucesso!</span>
             </div>
             <button type="button" class="alert-close">&times;</button>
         </div>
@@ -44,7 +70,7 @@ include __DIR__ . '/../../views/includes/header.php';
         <div class="alert alert-success">
             <div class="alert-content">
                 <i class="fa-solid fa-circle-check"></i>
-                <span>Categoria removida com sucesso!</span>
+                <span>Departamento removido com sucesso!</span>
             </div>
             <button type="button" class="alert-close">&times;</button>
         </div>
@@ -52,7 +78,7 @@ include __DIR__ . '/../../views/includes/header.php';
         <div class="alert alert-danger">
             <div class="alert-content">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <span>Não é possível excluir esta categoria porque existem produtos vinculados a ela!</span>
+                <span><strong>Atenção:</strong> Não é possível excluir este departamento porque existem produtos vinculados a ele no inventário! Remova ou altere os produtos antes de excluir.</span>
             </div>
             <button type="button" class="alert-close">&times;</button>
         </div>
@@ -60,7 +86,7 @@ include __DIR__ . '/../../views/includes/header.php';
         <div class="alert alert-danger">
             <div class="alert-content">
                 <i class="fa-solid fa-circle-exclamation"></i>
-                <span>Erro: Não foi possível realizar a operação na categoria.</span>
+                <span>Erro: Não foi possível processar a operação na categoria.</span>
             </div>
             <button type="button" class="alert-close">&times;</button>
         </div>
@@ -71,58 +97,55 @@ include __DIR__ . '/../../views/includes/header.php';
 <div class="card">
     <div class="card-header">
         <div class="card-title">
-            <i class="fa-solid fa-tags"></i>
-            <span>Categorias Cadastradas</span>
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Departamentos Ativos na Loja (<?php echo $num; ?>)</span>
         </div>
-        <a href="<?php echo $baseUrl; ?>/index.php?page=categorias&action=create" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i>
-            <span>Nova Categoria</span>
-        </a>
+        <div class="admin-search-input-box" style="max-width: 320px;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="tableSearchInput" placeholder="Filtrar departamento por nome...">
+        </div>
     </div>
 
     <div class="card-body">
-        <!-- Barra de Busca -->
-        <div class="action-bar">
-            <div class="search-filter-group">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="tableSearchInput" placeholder="Pesquisar categoria por nome...">
-                </div>
-            </div>
-        </div>
-
         <?php if ($num > 0): ?>
             <div class="table-responsive">
                 <table id="crudDataTable">
                     <thead>
                         <tr>
                             <th class="td-id">#ID</th>
-                            <th>Nome da Categoria</th>
-                            <th class="td-actions">Ações</th>
+                            <th>Nome do Departamento</th>
+                            <th>Visualização no Catálogo</th>
+                            <th class="td-actions">Ações de Gestão</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($categorias as $cat): ?>
                             <tr>
-                                <td class="td-id"><?php echo htmlspecialchars($cat['id']); ?></td>
+                                <td class="td-id"><strong>#<?php echo htmlspecialchars($cat['id']); ?></strong></td>
                                 <td class="td-name">
-                                    <span class="badge" style="font-size: 0.9rem; padding: 6px 14px;">
+                                    <span class="badge" style="font-size: 0.88rem; padding: 6px 14px;">
                                         <i class="fa-solid fa-tag"></i>
                                         <?php echo htmlspecialchars($cat['nome']); ?>
                                     </span>
+                                </td>
+                                <td>
+                                    <a href="<?php echo $baseUrl; ?>/index.php?page=produtos&cat=<?php echo urlencode($cat['nome']); ?>" class="btn btn-sm btn-secondary" style="font-size: 0.78rem;">
+                                        <i class="fa-solid fa-filter"></i>
+                                        <span>Filtrar Itens Deste Departamento</span>
+                                    </a>
                                 </td>
                                 <td class="td-actions">
                                     <div class="action-buttons">
                                         <a href="<?php echo $baseUrl; ?>/index.php?page=categorias&action=edit&id=<?php echo $cat['id']; ?>" 
                                            class="btn btn-sm btn-edit" 
-                                           title="Editar Categoria">
+                                           title="Editar Departamento">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                             <span>Editar</span>
                                         </a>
                                         <a href="<?php echo $baseUrl; ?>/index.php?page=categorias&action=delete&id=<?php echo $cat['id']; ?>" 
                                            class="btn btn-sm btn-delete" 
-                                           onclick="return confirm('Deseja realmente excluir a categoria &quot;<?php echo htmlspecialchars(addslashes($cat['nome'])); ?>&quot;?');"
-                                           title="Excluir Categoria">
+                                           onclick="return confirm('Deseja realmente excluir o departamento &quot;<?php echo htmlspecialchars(addslashes($cat['nome'])); ?>&quot;?');"
+                                           title="Excluir Departamento">
                                             <i class="fa-solid fa-trash"></i>
                                             <span>Excluir</span>
                                         </a>
@@ -135,14 +158,12 @@ include __DIR__ . '/../../views/includes/header.php';
             </div>
         <?php else: ?>
             <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="fa-solid fa-tags"></i>
-                </div>
-                <h3>Nenhuma categoria cadastrada</h3>
-                <p>Categorias ajudam a organizar os produtos no estoque.</p>
+                <div class="empty-icon"><i class="fa-solid fa-tags"></i></div>
+                <h3>Nenhum departamento cadastrado</h3>
+                <p>Crie departamentos para categorizar os produtos da sua loja virtual.</p>
                 <a href="<?php echo $baseUrl; ?>/index.php?page=categorias&action=create" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>
-                    <span>Cadastrar Primeira Categoria</span>
+                    <span>Cadastrar Primeiro Departamento</span>
                 </a>
             </div>
         <?php endif; ?>
